@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  bd:
+    image: mysql:8
+    container_name: mysql-db_container
+    ports:
+      - '3306:3306'
+    volumes:
+      - jobs-manager:/var/lib/mysql/data
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_DATABASE: jobs_manager
+
+volumes:
+  mysql_data:
