@@ -25,7 +25,15 @@ public class SecurityConfig{
             "/swagger-ui/**",
             "/v3/api-docs/**",
             "/swagger-resources/**",
-            "/v3/api-docs"
+            "/v3/api-docs",
+            "/swagger-ui.html"
+    };
+
+    private static final String[] PUBLIC_ROUTES = {
+      "/candidate/",
+      "/company/",
+      "/company/auth",
+      "/candidate/auth"
     };
 
 
@@ -36,10 +44,7 @@ public class SecurityConfig{
         try {
             http.csrf(AbstractHttpConfigurer::disable)
                     .authorizeHttpRequests(auth -> {
-                        auth.requestMatchers("/candidate/").permitAll();
-                        auth.requestMatchers("/company/").permitAll();
-                        auth.requestMatchers("/company/auth").permitAll();
-                        auth.requestMatchers("/candidate/auth").permitAll();
+                        auth.requestMatchers(PUBLIC_ROUTES).permitAll();
                         auth.requestMatchers(SWAGGER_LIST).permitAll();
                         auth.anyRequest().authenticated();
                     })
