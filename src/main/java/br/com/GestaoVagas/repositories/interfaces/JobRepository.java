@@ -9,6 +9,7 @@ import java.util.UUID;
 
 public interface JobRepository extends JpaRepository<JobEntity, UUID> {
     Optional<JobEntity> findByDescription(String description);
+    //Optional<JobEntity> findById(UUID id);
 
     List<JobEntity> findByDescriptionContaining(String filter);
 }

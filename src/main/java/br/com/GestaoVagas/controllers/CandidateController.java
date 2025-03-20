@@ -1,8 +1,10 @@
 package br.com.GestaoVagas.controllers;
 
 
+import br.com.GestaoVagas.models.ApplyJobsEntity;
 import br.com.GestaoVagas.models.CandidateEntity;
 import br.com.GestaoVagas.models.JobEntity;
+import br.com.GestaoVagas.services.ApplyJobCandidateService;
 import br.com.GestaoVagas.services.CreateCandidateService;
 import br.com.GestaoVagas.services.ListAllJobsByFilter;
 import br.com.GestaoVagas.services.ProfileCandidateService;
@@ -22,6 +24,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -37,6 +41,9 @@ public class CandidateController {
 
     @Autowired
     private ListAllJobsByFilter jobFilterService;
+
+    @Autowired
+    private ApplyJobCandidateService applyJobCandidateService;
 
     @PostMapping("/")
     @Operation(summary = "Cadastro do candidato", description = "Rota responsável pelo cadastro do candidato na base de dados")
@@ -89,5 +96,38 @@ public class CandidateController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Message: " + e.getMessage());
         }
+    }
+
+    @PostMapping("/job/apply")
+    @SecurityRequirement(name = "jwt_auth")
+    @Operation(summary = "Aplicação de vaga pelo candidato autenticado", description = "Rota para aplicação de vaga")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Aplicação de um candidato a uma vaga", content = {
+                    @Content(schema = @Schema(implementation = ApplyJobsEntity.class))
+            }),
+            @ApiResponse(responseCode = "404", description = "Quando a vaga ou o usuário não existe")
+    })
+    public ResponseEntity<Object> ApplyJob(HttpServletRequest request, @RequestBody UUID jobId){
+        var candidateId = UUID.fromString(request.getAttribute("candidate_id").toString());
+
+       try{
+           var result = applyJobCandidateService.apply(candidateId, jobId);
+
+           Map<String, Object> successMessage = new HashMap<>();
+
+           successMessage.put("status_code", "201");
+           successMessage.put("message", "the action was accomplished");
+           successMessage.put("response", result);
+
+           return ResponseEntity.status(HttpStatus.CREATED).body(successMessage);
+       } catch (Exception e) {
+
+           Map<String, String> errorMessage = new HashMap<>();
+
+           errorMessage.put("status_code", "404");
+           errorMessage.put("message", e.getMessage());
+
+           return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+       }
     }
 }
