@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class JWTProvider {
 
-    @Value("security.token.secret")
+    @Value("${security.token.secret}")
     private String secretKey;
 
     public DecodedJWT validateToken(String token){
@@ -21,7 +21,6 @@ public class JWTProvider {
 
         try{
             DecodedJWT tokenDecoded = JWT.require(algorithm).build().verify(cleanedToken);
-
             return tokenDecoded;
         } catch (Exception e) {
             e.printStackTrace();

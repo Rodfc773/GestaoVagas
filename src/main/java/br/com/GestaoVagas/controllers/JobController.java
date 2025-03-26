@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -34,14 +36,19 @@ public class JobController {
                    .benefits(newJobDTO.getBenefits())
                    .build();
 
-            newJob.setId(UUID.fromString(companyId.toString()));
+           System.out.println(companyId);
+            newJob.setCompanyId(UUID.fromString(companyId.toString()));
             Object resultOperation = this.service.create(newJob);
 
             return ResponseEntity.ok().body(resultOperation);
 
         }catch (Exception e){
 
-            return ResponseEntity.badRequest().body(e.getMessage());
+            Map<String, String> erroResponse = new HashMap<>();
+
+            erroResponse.put("Code", "400");
+            erroResponse.put("Message", e.getMessage());
+            return ResponseEntity.badRequest().body(erroResponse);
         }
     }
 }

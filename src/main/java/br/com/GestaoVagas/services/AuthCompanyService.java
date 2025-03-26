@@ -41,14 +41,13 @@ public class AuthCompanyService {
 
        if(!isPasswordCorrect) throw new AuthenticationException("The Password is incorrect");
 
-       Algorithm algorithm = Algorithm.HMAC256(this.secretKey);
-       var expires = Instant.now().plus(Duration.ofHours(5));
+       Algorithm algorithm = Algorithm.HMAC256(secretKey);
+       var expires = Instant.now().plus(Duration.ofHours(2));
 
         var token =JWT.create().withIssuer("javagas")
                 .withSubject(company.getId().toString())
                 .withExpiresAt(expires)
                 .withClaim("roles", Arrays.asList("COMPANY"))
-                .withExpiresAt(Instant.now().plus(Duration.ofHours(2)))
                 .sign(algorithm);
 
         ResponseAuthCompanyDTO authCompany = ResponseAuthCompanyDTO.builder().expires_in(expires.toEpochMilli()).access_token(token).build();
