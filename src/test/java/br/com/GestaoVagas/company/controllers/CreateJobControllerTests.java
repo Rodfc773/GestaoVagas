@@ -4,9 +4,9 @@ import br.com.GestaoVagas.Utils.TestUtils;
 import br.com.GestaoVagas.dto.CreateJobDTO;
 import br.com.GestaoVagas.models.CompanyEntity;
 import br.com.GestaoVagas.repositories.interfaces.CompanyRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -71,5 +71,25 @@ public class CreateJobControllerTests {
         } catch (Exception e) {
             throw new RuntimeException("Erro no teste");
         }
+    }
+    @Test
+    @DisplayName("Should not be able to crate a job if company doesn't exists ")
+    public void shouldNotBeAbleToCreateAJob(){
+
+        var object = CreateJobDTO.builder().benefits("Benefits Test").description("Test").level("Test").build();
+
+        String contentObject = ObjectToJSON(object);
+
+        try {
+
+            mvc.perform(MockMvcRequestBuilders.post("/company/jobs/")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", TestUtils.generateToken(UUID.randomUUID(), "JAVACOURSe@$5asl"))
+                            .content(contentObject))
+                            .andExpect(MockMvcResultMatchers.status().is(404));
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
     }
 }
