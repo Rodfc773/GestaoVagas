@@ -1,13 +1,17 @@
 package br.com.GestaoVagas.controllers;
 
 import br.com.GestaoVagas.dto.CreateJobDTO;
+import br.com.GestaoVagas.exceptions.JobAlreadyRegistered;
+import br.com.GestaoVagas.exceptions.UserNotFoundException;
 import br.com.GestaoVagas.models.JobEntity;
 import br.com.GestaoVagas.services.JobService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,10 +46,16 @@ public class JobController {
 
             return ResponseEntity.ok().body(resultOperation);
 
-        }catch (Exception e){
+        }catch (UserNotFoundException e){
 
             Map<String, String> erroResponse = new HashMap<>();
 
+            erroResponse.put("Code", "404");
+            erroResponse.put("Message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erroResponse);
+
+        } catch (JobAlreadyRegistered e) {
+            Map<String, String> erroResponse = new HashMap<>();
             erroResponse.put("Code", "400");
             erroResponse.put("Message", e.getMessage());
             return ResponseEntity.badRequest().body(erroResponse);
