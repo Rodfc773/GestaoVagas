@@ -17,3 +17,7 @@ services:
 
 volumes:
   mysql_data:
+
+networks:
+  my_network:
+    driver: bridge

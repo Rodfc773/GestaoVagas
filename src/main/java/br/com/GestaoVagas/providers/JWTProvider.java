@@ -23,7 +23,6 @@ public class JWTProvider {
             DecodedJWT tokenDecoded = JWT.require(algorithm).build().verify(cleanedToken);
             return tokenDecoded;
         } catch (Exception e) {
-            e.printStackTrace();
             return null;
         }
     }

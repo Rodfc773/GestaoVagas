@@ -16,7 +16,7 @@ import java.io.IOException;
 
 
 @Component
-public class SecurityFilter extends OncePerRequestFilter {
+public class SecurityCompanyFilter extends OncePerRequestFilter {
 
     @Autowired
     private JWTProvider jwtProvider;
@@ -36,8 +36,11 @@ public class SecurityFilter extends OncePerRequestFilter {
                     var roles = token.getClaim("roles").asList(Object.class);
 
                     var grants = roles.stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.toString())).toList();
+
                     request.setAttribute("company_id", token.getSubject());
+
                     UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(token, null, grants);
+
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 }
             }

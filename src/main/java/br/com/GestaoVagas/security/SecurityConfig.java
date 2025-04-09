@@ -16,7 +16,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 public class SecurityConfig{
 
     @Autowired
-    SecurityFilter securityFilter;
+    SecurityCompanyFilter securityFilter;
 
     @Autowired
     SecurityCandidateFilter securityCandidateFilter;
@@ -33,7 +33,8 @@ public class SecurityConfig{
       "/candidate/",
       "/company/",
       "/company/auth",
-      "/candidate/auth"
+      "/candidate/auth",
+      "/actuator/**",
     };
 
 
