@@ -1,5 +1,13 @@
 version: '3.8'
 
+networks:
+  my_network:
+    driver: bridge
+
+volumes:
+  prometheus_data:
+  grafana_data:
+
 services:
   bd:
     image: mysql:8
@@ -14,10 +22,21 @@ services:
       MYSQL_USER: user
       MYSQL_PASSWORD: password
       MYSQL_DATABASE: jobs_manager
-
-volumes:
-  mysql_data:
-
-networks:
-  my_network:
-    driver: bridge
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus.yml
+      - prometheus_data:/prometheus
+    networks:
+      - my-network
+    ports:
+      - '9090:9090'
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  grafa:
+    container_name: grafa
+    image: grafana/grafana:latest
+    ports:
+      - '3000:3000'
+    networks:
+      - my_network
