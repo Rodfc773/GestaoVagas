@@ -7,6 +7,8 @@ networks:
 volumes:
   prometheus_data:
   grafana_data:
+  postgres_data:
+  mysql_data:
 
 services:
   bd:
@@ -15,7 +17,7 @@ services:
     ports:
       - '3306:3306'
     volumes:
-      - jobs-manager:/var/lib/mysql/data
+      - mysql_data:/var/lib/mysql/data
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
@@ -40,3 +42,16 @@ services:
       - '3000:3000'
     networks:
       - my_network
+      -
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    ports:
+      - '5432:5432'
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: gestao_vagas
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
