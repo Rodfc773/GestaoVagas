@@ -4,6 +4,7 @@ RUN apt-get update
 RUN apt-get update && apt-get install -y openjdk-17-jdk maven
 
 COPY . .
+RUN cp src/main/resources/application-example.properties src/main/resources/application.properties
 
 RUN mvn clean install -DskipTests
 
