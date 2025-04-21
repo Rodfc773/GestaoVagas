@@ -28,8 +28,8 @@ jobs:
       runs-on: self-hosted
       steps:
         - name: pull image docker hub
-          run: docker pull rodfc773/gestao_vagas:latest
+          run: sudo docker pull rodfc773/gestao_vagas:latest
         - name: Remove container
-          run: docker rm -f gestao-vagas
+          run: sudo docker rm -f gestao-vagas
         - name: Run docker container
-          run: docker run -d -p 8080:8080 -e DATABASE_URL=${{secrets.DATABASE_URL}} -e DATABASE_PASSWORD${{secrets.DATABASE_PASSWORD}} -e DATABASE_USERNAME=${{secrets.DATABASE_USERNAME}} --name gestao-vagas rodfc773/gestao_vagas
+          run: sudo docker run -d -p 8080:8080 -e DATABASE_URL=${{secrets.DATABASE_URL}} -e DATABASE_PASSWORD${{secrets.DATABASE_PASSWORD}} -e DATABASE_USERNAME=${{secrets.DATABASE_USERNAME}} --name gestao-vagas rodfc773/gestao_vagas
