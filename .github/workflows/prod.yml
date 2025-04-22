@@ -2,34 +2,58 @@ name: Gestao de Vagas Application
 
 on:
   push:
-      branches: [main]
+    branches: [main]
 
 jobs:
-    build:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v3
-        - name: Setup Java
-          uses: actions/setup-java@v3
-          with:
-            distribution: temurin
-            java-version: 17
-        - name: Build project
-          run: mvn clean install -DskipTests
-        - name: Login Docker
-          run: docker login -u '${{secrets.DOCKER_USERNAME}}' -p '${{secrets.DOCKER_PASSWORD}}'
-        - name : Build docker image
-          run: docker build -t rodfc773/gestao_vagas .
-        - name: Publish images
-          run: docker push rodfc773/gestao_vagas
-    deploy:
-      needs: build
-      runs-on: self-hosted
-      steps:
-        - name: pull image docker hub
-          run: sudo docker pull rodfc773/gestao_vagas:latest
-        - name: Remove container
-          run: sudo docker rm -f gestao-vagas
-        - name: Run docker container
-          run: sudo docker run -d -p 8080:8080 -e DATABASE_URL="${{secrets.DATABASE_URL}}" -e DATABASE_PASSWORD="${{secrets.DATABASE_PASSWORD}}" -e DATABASE_USERNAME="${{secrets.DATABASE_USERNAME}}" --name gestao-vagas rodfc773/gestao_vagas:latest
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Build project
+        run: mvn clean install -DskipTests
+
+      - name: Login to DockerHub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build Docker image with tag
+        run: |
+          docker build -t rodfc773/gestao_vagas:latest .
+
+      - name: Push Docker image
+        run: docker push rodfc773/gestao_vagas:latest
+
+  deploy:
+    needs: build
+    runs-on: self-hosted
+
+    steps:
+      - name: Pull latest Docker image
+        run: sudo docker pull rodfc773/gestao_vagas:latest
+
+      - name: Stop and remove existing container
+        run: |
+          if [ "$(sudo docker ps -q -f name=gestao-vagas)" ]; then
+            sudo docker stop gestao-vagas
+          fi
+          if [ "$(sudo docker ps -aq -f name=gestao-vagas)" ]; then
+            sudo docker rm gestao-vagas
+          fi
+
+      - name: Run Docker container
+        run: |
+          sudo docker run -d \
+            -p 8080:8080 \
+            --name gestao-vagas \
+            -e DATABASE_URL="${{ secrets.DATABASE_URL }}" \
+            -e DATABASE_PASSWORD="${{ secrets.DATABASE_PASSWORD }}" \
+            -e DATABASE_USERNAME="${{ secrets.DATABASE_USERNAME }}" \
+            rodfc773/gestao_vagas:latest
