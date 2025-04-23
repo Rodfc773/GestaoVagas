@@ -15,7 +15,7 @@ FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
-EXPOSE 8080
+EXPOSE 8090
 
 COPY --from=build /app/target/GestaoVagas-0.0.1-SNAPSHOT.jar app.jar
 

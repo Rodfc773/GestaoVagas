@@ -51,7 +51,7 @@ jobs:
       - name: Run Docker container
         run: |
           sudo docker run -d \
-            -p 8080:8080 \
+            -p ${{secrets.APP_PORT}}:${{secrets.APP_PORT}} \
             --name gestao-vagas \
             -e DATABASE_URL="${{ secrets.DATABASE_URL }}" \
             -e DATABASE_PASSWORD="${{ secrets.DATABASE_PASSWORD }}" \
