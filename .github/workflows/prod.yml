@@ -56,4 +56,9 @@ jobs:
             -e DATABASE_URL="${{ secrets.DATABASE_URL }}" \
             -e DATABASE_PASSWORD="${{ secrets.DATABASE_PASSWORD }}" \
             -e DATABASE_USERNAME="${{ secrets.DATABASE_USERNAME }}" \
+            -e SECURITY_TOKEN="${{secrets.SECURITY_TOKEN}}" \
+            -e SECURITY_CANDIDATE_TOKEN="${{secrets.SECURITY_CANDIDATE_TOKEN}}" \
             rodfc773/gestao_vagas:latest
+      - name: Remove unused Docker images
+        run: |
+          sudo docker image prune -f
