@@ -58,6 +58,7 @@ jobs:
             -e DATABASE_USERNAME="${{ secrets.DATABASE_USERNAME }}" \
             -e SECURITY_TOKEN="${{secrets.SECURITY_TOKEN}}" \
             -e SECURITY_CANDIDATE_TOKEN="${{secrets.SECURITY_CANDIDATE_TOKEN}}" \
+            -e APP_PORT="${{secrets.APP_PORT}}" \
             rodfc773/gestao_vagas:latest
       - name: Remove unused Docker images
         run: |
